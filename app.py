@@ -202,21 +202,19 @@ if st.session_state.submitted:
               text=[ticker] * len(filtered_dates),
           ))
 
+        # 优化标题文案，防止手机端过长重叠
         title_text = (
-            f"DCA Strategy Return (%) - Daily ${dca_amount} (Log Scale)"
+            f"DCA Strategy Returns (${dca_amount}/day)"
             if enable_dca
-            else (
-                "Relative Percentage Return (%) [Normalized to 0% at Start]"
-                " (Log Scale)"
-            )
+            else "Relative Price Returns (Normalized to 0%)"
         )
 
         fig.update_layout(
-            title=title_text,
+            title=dict(text=title_text, font=dict(size=14)),
             xaxis_title="Date",
             yaxis=dict(
                 type="log",
-                title="Return Multiplier / Log Scale (0% = 1.0)",
+                title="Return Multiplier (Log Scale)",
                 tickvals=[0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 5.0, 10.0],
                 ticktext=[
                     "-75%",
@@ -233,9 +231,11 @@ if st.session_state.submitted:
             hovermode="x unified",
             template="plotly_white",
             legend=dict(
-                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+                orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
             ),
-            margin=dict(l=40, r=40, t=60, b=40),
+            margin=dict(
+                l=40, r=20, t=80, b=40
+            ),  # 增加顶部 margin.t 留白，防止和工具栏冲突
         )
 
         st.plotly_chart(fig, use_container_width=True)
