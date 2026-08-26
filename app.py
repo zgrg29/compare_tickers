@@ -202,15 +202,16 @@ if st.session_state.submitted:
               text=[ticker] * len(filtered_dates),
           ))
 
-        # 优化标题文案，防止手机端过长重叠
-        title_text = (
-            f"DCA Strategy Returns (${dca_amount}/day)"
+        # 使用 Streamlit 原生标题替代 Plotly 自带标题，彻底避免与工具栏重叠
+        chart_title_markdown = (
+            f"### 📊 DCA Strategy Returns (${dca_amount}/day)"
             if enable_dca
-            else "Relative Price Returns (Normalized to 0%)"
+            else "### 📊 Relative Price Returns (Normalized to 0%)"
         )
+        st.markdown(chart_title_markdown)
 
         fig.update_layout(
-            title=dict(text=title_text, font=dict(size=14)),
+            title="",  # 留空，避免和工具栏冲突
             xaxis_title="Date",
             yaxis=dict(
                 type="log",
@@ -231,11 +232,15 @@ if st.session_state.submitted:
             hovermode="x unified",
             template="plotly_white",
             legend=dict(
-                orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5
-            ),
+                orientation="h",
+                yanchor="top",
+                y=-0.25,
+                xanchor="center",
+                x=0.5,
+            ),  # 将图例下移到画布下方
             margin=dict(
-                l=40, r=20, t=80, b=40
-            ),  # 增加顶部 margin.t 留白，防止和工具栏冲突
+                l=40, r=20, t=20, b=80
+            ),  # 增加底部 margin.b 留白，防止图例和X轴挤压
         )
 
         st.plotly_chart(fig, use_container_width=True)
